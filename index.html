@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peta Hasbiyah</title>
+    <title>Peta Hasbiyah - Dashboard Keuangan</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -11,67 +11,150 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary: #2E7D32; --primary-dark: #1B5E20; --secondary: #E8F5E9;
-            --background: #F4F7F6; --card-bg: #FFFFFF; --text: #333333; 
-            --text-light: #757575; --border: #E0E0E0; --input-bg: #FFFFFF;
-            --danger: #D32F2F; --success: #388E3C; --shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+    :root {
+        --primary: #2E7D32; --primary-dark: #1B5E20; --secondary: #E8F5E9;
+        --background: #F4F7F6; --card-bg: #FFFFFF; --text: #333333; 
+        --text-light: #757575; --border: #E0E0E0; --input-bg: #FFFFFF;
+        --danger: #D32F2F; --success: #388E3C; --shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        [data-theme="dark"] {
-            --background: #121212; --card-bg: #1E1E1E; --text: #E0E0E0; 
-            --text-light: #B0B0B0; --border: #333333; --input-bg: #2C2C2C;
-            --secondary: #1B5E20; --success: #4ADE80; --danger: #F87171; --primary: #86EFAC;
-        }
+    [data-theme="dark"] {
+        --background: #121212; --card-bg: #1E1E1E; --text: #E0E0E0; 
+        --text-light: #B0B0B0; --border: #333333; --input-bg: #2C2C2C;
+        --secondary: #1B5E20; --success: #4ADE80; --danger: #F87171; --primary: #86EFAC;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--text); padding: 20px; transition: background 0.3s ease; }
-        .container { max-width: 1400px; margin: auto; }
-        
-        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 25px; }
-        h1.brand-title { color: var(--primary); font-weight: 800; font-size: 28px; }
-        .theme-toggle { background: var(--secondary); color: var(--primary); padding: 8px 18px; border-radius: 25px; cursor: pointer; border: 2px solid var(--primary); font-weight: bold; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--text); padding: 20px; transition: background 0.3s ease; }
+    .container { max-width: 1400px; margin: auto; }
+    
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 25px; }
+    h1.brand-title { color: var(--primary); font-weight: 800; font-size: 28px; }
+    
+    .theme-toggle { background: var(--secondary); color: var(--primary); padding: 8px 18px; border-radius: 25px; cursor: pointer; border: 2px solid var(--primary); font-weight: bold; transition: var(--transition); }
+    .theme-toggle:hover { background: var(--primary); color: white; transform: scale(1.05); }
 
-        .tab-system { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { padding: 12px 24px; border-radius: 12px 12px 0 0; border: none; cursor: pointer; font-weight: 700; background: var(--border); color: var(--text-light); }
-        .tab-btn.active { background: var(--primary); color: white; }
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .tab-system { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab-btn { padding: 12px 24px; border-radius: 12px 12px 0 0; border: none; cursor: pointer; font-weight: 700; background: var(--border); color: var(--text-light); transition: var(--transition); }
+    .tab-btn.active { background: var(--primary); color: white; transform: translateY(-2px); box-shadow: 0 -4px 10px rgba(46, 125, 50, 0.2); }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--card-bg); padding: 22px; border-radius: 15px; box-shadow: var(--shadow); border-left: 6px solid #ccc; transition: var(--transition); }
-        .stat-kotor { border-left-color: #2E7D32; } .stat-kotor:hover { background: rgba(46, 125, 50, 0.08); transform: translateY(-3px); }
-        .stat-keluar { border-left-color: #D32F2F; } .stat-keluar:hover { background: rgba(211, 47, 47, 0.08); transform: translateY(-3px); }
-        .stat-gaji { border-left-color: #FBC02D; } .stat-gaji:hover { background: rgba(251, 192, 45, 0.08); transform: translateY(-3px); }
-        .stat-bersih { border-left-color: #1B5E20; } .stat-bersih:hover { background: rgba(27, 94, 32, 0.08); transform: translateY(-3px); }
-        .stat-pasien { border-left-color: #9C27B0; } .stat-pasien:hover { background: rgba(156, 39, 176, 0.08); transform: translateY(-3px); }
+    .tab-content { display: none; opacity: 0; transform: translateY(10px); }
+    .tab-content.active { display: block; animation: fadeInUp 0.4s forwards; }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-        .stat-label { font-size: 11px; color: var(--text-light); font-weight: 700; text-transform: uppercase; }
-        .stat-value { font-size: 24px; font-weight: 800; margin-top: 10px; display: block; }
-        .masuk { color: var(--success); }
-        .keluar { color: var(--danger); }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
 
-        .main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 25px; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border); }
-        h4.card-title { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--secondary); padding-bottom: 8px; font-weight: 800; }
-        
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 12px; background: var(--input-bg); color: var(--text); }
-        button { padding: 12px 15px; cursor: pointer; border: none; border-radius: 10px; font-weight: 700; }
-        .btn-primary { background: var(--primary); color: white; width: 100%; }
-        .btn-excel { background: #1B5E20; color: white; font-size: 12px; }
-        .btn-pdf { background: #B71C1C; color: white; font-size: 12px; }
-        
-        .manager-list { max-height: 120px; overflow-y: auto; margin-bottom: 15px; border: 1px solid var(--border); padding: 8px; border-radius: 10px; }
-        .list-item { display: inline-flex; align-items: center; background: var(--background); padding: 5px 12px; border-radius: 20px; margin: 3px; font-size: 11px; font-weight: 600; }
+    /* ================= HOVER WARNA (UTAMA) ================= */
 
-        .table-container { background: var(--card-bg); border-radius: 15px; box-shadow: var(--shadow); padding: 15px; overflow-x: auto; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; }
-        th { padding: 15px; background: var(--background); font-size: 11px; color: var(--text-light); text-transform: uppercase; border-bottom: 2px solid var(--border); }
-        td { padding: 12px; border-bottom: 1px solid var(--border); text-align: center; font-size: 13px; }
-        .hidden { display: none !important; }
-    </style>
+    .stat-card { 
+    background: var(--card-bg);
+    padding: 22px; 
+    border-radius: 15px; 
+    box-shadow: var(--shadow); 
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    /* GARIS SAMPING */
+    border-left: 6px solid transparent;
+}
+
+/* WARNA MASING-MASING CARD */
+.stat-kotor {
+    border-left: 6px solid #2E7D32;
+}
+
+.stat-keluar {
+    border-left: 6px solid #D32F2F;
+}
+
+.stat-gaji {
+    border-left: 6px solid #FBC02D;
+}
+
+.stat-bersih {
+    border-left: 6px solid #1B5E20;
+}
+
+.stat-pasien {
+    border-left: 6px solid #9C27B0;
+}
+
+/* BONUS HOVER BIAR HIDUP */
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+    /* === HOVER WARNA SAMAR (LEBIH SOFT) === */
+
+.stat-kotor:hover {
+    background: rgba(46,125,50,0.12);
+}
+
+.stat-keluar:hover {
+    background: rgba(211,47,47,0.12);
+}
+
+.stat-gaji:hover {
+    background: rgba(251,192,45,0.18);
+}
+
+.stat-bersih:hover {
+    background: rgba(27,94,32,0.12);
+}
+
+.stat-pasien:hover {
+    background: rgba(156,39,176,0.12);
+}
+
+    /* efek naik halus */
+    .stat-card:hover { 
+        transform: translateY(-5px) scale(1.02); 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+    }
+
+    /* ====================================================== */
+
+    .stat-label { font-size: 11px; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 24px; font-weight: 800; margin-top: 10px; display: block; }
+    
+    .main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 25px; }
+    .card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border); transition: var(--transition); }
+    h4.card-title { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--secondary); padding-bottom: 8px; font-weight: 800; }
+    
+    input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 12px; background: var(--input-bg); color: var(--text); transition: var(--transition); }
+    input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px var(--secondary); }
+    
+    button { padding: 12px 15px; cursor: pointer; border: none; border-radius: 10px; font-weight: 700; transition: var(--transition); }
+    button:active { transform: scale(0.95); }
+    
+    .btn-primary { background: var(--primary); color: white; width: 100%; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-excel { background: #1B5E20; color: white; font-size: 12px; }
+    .btn-pdf { background: #B71C1C; color: white; font-size: 12px; }
+
+    .manager-list { max-height: 140px; overflow-y: auto; margin-bottom: 15px; border: 1px solid var(--border); padding: 10px; border-radius: 10px; background: var(--input-bg); }
+    .list-item { 
+        display: inline-flex; align-items: center; 
+        background: #2E7D32 !important; color: white !important;
+        padding: 6px 14px; border-radius: 20px; margin: 4px; 
+        font-size: 12px; font-weight: 600; 
+        animation: popIn 0.3s ease; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+    .table-container { background: var(--card-bg); border-radius: 15px; box-shadow: var(--shadow); padding: 15px; overflow-x: auto; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 15px; background: var(--background); font-size: 11px; color: var(--text-light); text-transform: uppercase; border-bottom: 2px solid var(--border); }
+    td { padding: 12px; border-bottom: 1px solid var(--border); text-align: center; font-size: 13px; transition: background 0.2s; }
+    tr:hover td { background: rgba(0,0,0,0.02); }
+    
+    .masuk { color: var(--success); font-weight: 700; }
+    .keluar { color: var(--danger); font-weight: 700; }
+    .hidden { display: none !important; }
+</style>
 </head>
 
 <body data-theme="light">
@@ -111,6 +194,7 @@
                     <select id="inputTerapis" class="hidden"></select>
                     <input type="number" id="jumlah" placeholder="Nominal Rp">
                     <input type="text" id="deskripsi" placeholder="Keterangan">
+<input type="number" id="jumlahPasien" placeholder="Jumlah Pasien" min="1" value="1">
                     <button onclick="tambahData()" class="btn-primary">💾 SIMPAN DATA</button>
                 </div>
             </aside>
@@ -148,7 +232,7 @@
             <div class="stat-card stat-kotor"><div class="stat-label">Omzet Jasa</div><div id="omzetTerapis" class="stat-value masuk">Rp 0</div></div>
             <div class="stat-card stat-gaji"><div class="stat-label">Bagi Hasil</div><div id="gajiTerapis" class="stat-value" style="color: #FBC02D;">Rp 0</div></div>
             <div class="stat-card stat-bersih"><div class="stat-label">Net Peta</div><div id="bersihTerapisPage" class="stat-value" style="color: var(--primary);">Rp 0</div></div>
-            <div class="stat-card stat-pasien"><div class="stat-label">Jumlah Pasien</div><div id="pasienTerapis" class="stat-value">0</div></div>
+            <div class="stat-card stat-pasien"><div class="stat-label">Jumlah Pasien</div><div id="pasienTerapis" class="stat-value" style="color: #9C27B0;">0</div></div>
         </div>
         <div class="table-container">
             <table>
@@ -191,11 +275,19 @@
         if(id === 'tab-terapis') renderTerapisPage();
     }
 
+function ambilJumlahPasien(deskripsi) {
+    if (!deskripsi || deskripsi === "-") return 1;
+
+    // ambil angka dari teks (contoh: "3 orang" => 3)
+    let match = deskripsi.toString().match(/\d+/);
+    return match ? parseInt(match[0]) : 1;
+}
+
     function renderTerapisUI() {
         const s = document.getElementById('inputTerapis'), f = document.getElementById('filterKhususTerapis'), c = document.getElementById('listTerapisContainer');
         s.innerHTML = '<option value="">-- Pilih Terapis --</option>'; f.innerHTML = '<option value="Semua">Semua Terapis</option>';
         daftarTerapis.sort().forEach(t => { const o = `<option value="${t}">${t}</option>`; s.innerHTML += o; f.innerHTML += o; });
-        c.innerHTML = ''; daftarTerapis.forEach((t, i) => { c.innerHTML += `<div class="list-item">${t} <span onclick="hapusMaster('terapis', ${i})" style="color:red;cursor:pointer;margin-left:5px;">&times;</span></div>`; });
+        c.innerHTML = ''; daftarTerapis.forEach((t, i) => { c.innerHTML += `<div class="list-item">${t} <span onclick="hapusMaster('terapis', ${i})" style="color:white;cursor:pointer;margin-left:10px;font-weight:bold;opacity:0.7;">&times;</span></div>`; });
     }
 
     function renderUsahaUI() {
@@ -203,7 +295,7 @@
         s.innerHTML = ''; f.innerHTML = '<option value="Semua">Semua Usaha</option>';
         c.innerHTML = ''; daftarUsaha.forEach((u, i) => {
             s.innerHTML += `<option value="${u}">${u}</option>`; f.innerHTML += `<option value="${u}">${u}</option>`;
-            c.innerHTML += `<div class="list-item">${u} <span onclick="hapusMaster('usaha', ${i})" style="color:red;cursor:pointer;margin-left:5px;">&times;</span></div>`;
+            c.innerHTML += `<div class="list-item">${u} <span onclick="hapusMaster('usaha', ${i})" style="color:white;cursor:pointer;margin-left:10px;font-weight:bold;opacity:0.7;">&times;</span></div>`;
         });
         toggleTerapisUI();
     }
@@ -214,11 +306,37 @@
     function toggleTerapisUI() { const u = document.getElementById('usaha').value.toLowerCase(); const isS = u.includes("pijat")||u.includes("bekam")||u.includes("gurah"); document.getElementById('inputTerapis').classList.toggle('hidden', !isS); }
 
     function tambahData() {
-        const u = document.getElementById('usaha').value, tgl = document.getElementById('tanggal').value, j = document.getElementById('jenis').value, jml = parseInt(document.getElementById('jumlah').value), trp = document.getElementById('inputTerapis').value, dsk = document.getElementById('deskripsi').value;
+        const u = document.getElementById('usaha').value,
+              tgl = document.getElementById('tanggal').value,
+              j = document.getElementById('jenis').value,
+              jml = document.getElementById('jumlah').value, // ambil sebagai string dulu
+              trp = document.getElementById('inputTerapis').value,
+              dsk = document.getElementById('deskripsi').value,
+              pasien = document.getElementById('jumlahPasien').value || 1;
+
         if(!tgl || !jml) return alert("Wajib diisi!");
+
         const isS = u.toLowerCase().includes("pijat")||u.toLowerCase().includes("bekam")||u.toLowerCase().includes("gurah");
-        cacheData.push({ tanggal: tgl, usaha: u, jenis: j, jumlah: jml, terapis: (isS ? (trp || "Tanpa Nama") : "-"), deskripsi: dsk || "-" });
-        localStorage.setItem("cacheData_v2", JSON.stringify(cacheData)); renderData();
+        
+        cacheData.push({
+            tanggal: tgl, 
+            usaha: u, 
+            jenis: j, 
+            jumlah: parseInt(jml),
+            terapis: (isS ? (trp || "Tanpa Nama") : "-"),
+            deskripsi: dsk || "-", 
+            pasien: isS ? parseInt(pasien) : 0
+        });
+
+        localStorage.setItem("cacheData_v2", JSON.stringify(cacheData));
+        renderData();
+
+        // --- BAGIAN INI UNTUK MENGOSONGKAN FORM OTOMATIS ---
+        document.getElementById('jumlah').value = "";
+        document.getElementById('deskripsi').value = "";
+        document.getElementById('jumlahPasien').value = "1";
+        // Jika ingin tanggal juga ikut ter-reset ke hari ini:
+        // document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
     }
 
     function renderData() {
@@ -227,8 +345,9 @@
         const tb = document.getElementById('tabelData'); tb.innerHTML = "";
         let k=0, l=0, p=0, g=0;
         data.forEach(d => {
-            if(d.jenis === 'masuk') { k+=d.jumlah; let gj = (d.terapis !== "-" && d.terapis !== "Tanpa Nama") ? (d.jumlah <= 50000 ? d.jumlah : d.jumlah * 0.65) : 0; g+=gj; p+=(d.jumlah-gj); } else { l+=d.jumlah; }
-            tb.innerHTML += `<tr><td>${formatTglIndo(d.tanggal)}</td><td>${d.usaha}</td><td class="${d.jenis}">${d.jenis.toUpperCase()}</td><td>${d.terapis}</td><td>${formatRupiah(d.jumlah)}</td><td>${d.deskripsi}</td><td><button onclick="hapus(${cacheData.indexOf(d)})" style="color:red;background:none;border:none;cursor:pointer;font-size:16px;">&times;</button></td></tr>`;
+            let gj = (d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama") ? (d.jumlah <= 50000 ? d.jumlah : d.jumlah * 0.65) : 0;
+            if(d.jenis === 'masuk') { k+=d.jumlah; g+=gj; p+=(d.jumlah-gj); } else { l+=d.jumlah; }
+            tb.innerHTML += `<tr><td>${formatTglIndo(d.tanggal)}</td><td>${d.usaha}</td><td class="${d.jenis}">${d.jenis.toUpperCase()}</td><td>${d.terapis}</td><td>${formatRupiah(d.jumlah)}</td><td>${d.deskripsi}</td><td><button onclick="hapus(${cacheData.indexOf(d)})" style="color:red;background:none;border:none;cursor:pointer;">&times;</button></td></tr>`;
         });
         document.getElementById('quickKotor').textContent = formatRupiah(k); document.getElementById('quickKeluar').textContent = formatRupiah(l); document.getElementById('quickGaji').textContent = formatRupiah(g); document.getElementById('quickBersih').textContent = formatRupiah(p-l);
     }
@@ -238,30 +357,31 @@
         const fM = document.getElementById('tglMulaiTerapis').value, fS = document.getElementById('tglSelesaiTerapis').value;
         const data = cacheData.filter(d => d.jenis === 'masuk' && d.terapis !== "-" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS)).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
         const tb = document.getElementById('tabelTerapis'); tb.innerHTML = "";
-        let o=0, g=0, b=0;
+        let o=0, g=0, b=0, totalPasien=0;
         data.forEach(d => {
             let gj = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65); o+=d.jumlah; g+=gj; b+=(d.jumlah-gj);
+totalPasien += d.pasien || ambilJumlahPasien(d.deskripsi) || 1;
             tb.innerHTML += `<tr><td>${formatTglIndo(d.tanggal)}</td><td>${d.usaha}</td><td>${d.terapis}</td><td class="masuk">${formatRupiah(d.jumlah)}</td><td style="color:#FBC02D; font-weight:bold;">${formatRupiah(gj)}</td><td>${d.deskripsi}</td></tr>`;
         });
         document.getElementById('omzetTerapis').textContent = formatRupiah(o); document.getElementById('gajiTerapis').textContent = formatRupiah(g); document.getElementById('bersihTerapisPage').textContent = formatRupiah(b);
-        document.getElementById('pasienTerapis').textContent = data.length;
+        document.getElementById('pasienTerapis').textContent = totalPasien;
     }
 
     function exportPDFGeneric(mode) {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('p', 'mm', 'a4');
-        let title = mode === 'utama' ? "LAPORAN KEUANGAN PETA HASBIYAH" : "LAPORAN KOMISI TERAPIS";
+        let title = mode === 'utama' ? "LAPORAN KEUANGAN PETA HASBIYAH" : "LAPORAN BAGI HASIL TERAPIS";
         let fM = mode === 'utama' ? document.getElementById('filterMulai').value : document.getElementById('tglMulaiTerapis').value;
         let fS = mode === 'utama' ? document.getElementById('filterSelesai').value : document.getElementById('tglSelesaiTerapis').value;
         let unit = mode === 'utama' ? document.getElementById('filterUsaha').value : document.getElementById('filterKhususTerapis').value;
 
         doc.setFillColor(46, 125, 50); doc.rect(0, 0, 210, 40, 'F');
-        doc.setTextColor(255); doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.text(title, 15, 18);
+        doc.setTextColor(255); doc.setFontSize(18); doc.setFont("helvetica", "bold"); doc.text(title, 15, 18);
         doc.setFontSize(10); doc.setFont("helvetica", "normal");
         doc.text(`Periode: ${formatTglIndo(fM)} s/d ${formatTglIndo(fS)}`, 15, 26);
-        doc.text(`${mode === 'utama'?'Unit':'Terapis'}: ${unit}`, 15, 32);
+        doc.text(`${mode === 'utama' ? 'Unit Bisnis' : 'Nama Terapis'}: ${unit}`, 15, 32);
 
-        let k=0, l=0, g=0, gt={};
+        let kotor=0, keluar=0, gaji=0, listTerapisSummary={}, totalPasien=0;
         let filtered = cacheData.filter(d => {
             let dm = d.tanggal >= fM && d.tanggal <= fS;
             if(mode === 'utama') return dm && (unit === "Semua" || d.usaha === unit);
@@ -270,35 +390,136 @@
 
         let rows = filtered.map(d => {
             let gj = 0;
-            if(d.jenis === 'masuk') { k+=d.jumlah; gj = (d.terapis !== "-" && d.terapis !== "Tanpa Nama") ? (d.jumlah <= 50000 ? d.jumlah : d.jumlah * 0.65) : 0; g+=gj; if(gj>0) gt[d.terapis] = (gt[d.terapis]||0)+gj; } else { l+=d.jumlah; }
+            if(d.jenis === 'masuk') { 
+                kotor += d.jumlah; 
+                gj = (d.terapis !== "-" && d.terapis !== "Tanpa Nama") ? (d.jumlah <= 50000 ? d.jumlah : d.jumlah * 0.65) : 0; 
+                gaji += gj;
+                totalPasien += d.pasien || ambilJumlahPasien(d.deskripsi) || 1;
+                if(gj > 0) {
+                    if(!listTerapisSummary[d.terapis]) listTerapisSummary[d.terapis] = { gaji: 0, pasien: 0 };
+                    listTerapisSummary[d.terapis].gaji += gj;
+                    listTerapisSummary[d.terapis].pasien += 1;
+                }
+            } else { keluar += d.jumlah; }
             return mode === 'utama' ? [formatTglIndo(d.tanggal), d.usaha, d.jenis.toUpperCase(), d.terapis, formatRupiah(d.jumlah), d.deskripsi] : [formatTglIndo(d.tanggal), d.usaha, d.terapis, formatRupiah(d.jumlah), formatRupiah(gj), d.deskripsi];
         });
 
         doc.autoTable({
-            head: mode === 'utama' ? [['Tgl', 'Usaha', 'Jenis', 'Terapis', 'Nominal', 'Ket']] : [['Tgl', 'Usaha', 'Nama', 'Omzet', 'Gaji', 'Ket']],
-            body: rows, startY: 45, theme: 'grid', styles: { fontSize: 8 },
-            headStyles: { fillColor: [38, 166, 154], textColor: 255, halign: 'center' },
-            didParseCell: (data) => { if(data.section === 'body' && (data.cell.raw === 'KELUAR')) data.cell.styles.textColor = [211, 47, 47]; if(data.section === 'body' && (data.cell.raw === 'MASUK')) data.cell.styles.textColor = [56, 142, 60]; }
+            head: mode === 'utama' ? [['Tgl', 'Usaha', 'Jenis', 'Terapis', 'Nominal', 'Ket']] : [['Tgl', 'Usaha', 'Nama Terapis', 'Omzet', 'Gaji', 'Ket']],
+            body: rows, startY: 45, theme: 'grid', styles: { fontSize: 8, halign: 'center' },
+            headStyles: { fillColor: [0, 150, 136], textColor: 255 },
+            didParseCell: (data) => {
+                if(data.section === 'body') {
+                    if(mode === 'terapis') {
+                        if(data.column.index === 3) data.cell.styles.textColor = [56, 142, 60];
+                        if(data.column.index === 4) { data.cell.styles.textColor = [211, 158, 0]; data.cell.styles.fontStyle = 'bold'; }
+                    } else {
+                        if(data.cell.raw === 'MASUK') data.cell.styles.textColor = [56, 142, 60];
+                        if(data.cell.raw === 'KELUAR') data.cell.styles.textColor = [211, 47, 47];
+                    }
+                }
+            }
         });
 
         let fy = doc.lastAutoTable.finalY + 10;
-        doc.setDrawColor(46, 125, 50); doc.rect(15, fy, 180, 60);
-        doc.setTextColor(46, 125, 50); doc.setFont("helvetica", "bold"); doc.text("RINGKASAN REKAPITULASI", 20, fy + 10);
+        if(fy > 200) { doc.addPage(); fy = 20; }
+        
+        // BOX RINGKASAN
+        let boxHeight = mode === 'terapis' ? 70 : 65;
+        doc.setDrawColor(46, 125, 50); doc.rect(15, fy, 180, boxHeight);
+        doc.setTextColor(46, 125, 50); doc.setFont("helvetica", "bold"); doc.text("RINGKASAN REKAPITULASI", 20, fy + 8);
         doc.setTextColor(0); doc.setFont("helvetica", "normal");
-        doc.text(`Total Pendapatan Kotor : ${formatRupiah(k)}`, 20, fy + 22);
-        doc.text(`Total Pengeluaran       : ${formatRupiah(l)}`, 20, fy + 30);
-        doc.text(`Total Gaji Terapis        : ${formatRupiah(g)}`, 20, fy + 38);
-        doc.line(100, fy + 5, 100, fy + 45);
-        doc.setFont("helvetica", "bold"); doc.text("DETAIL DISTRIBUSI GAJI:", 105, fy + 10);
-        doc.setFont("helvetica", "normal");
-        let rg = fy + 18; for (let t in gt) { if(rg < fy + 48) { doc.text(`- ${t}`, 105, rg); doc.text(formatRupiah(gt[t]), 185, rg, {align:'right'}); rg += 6; } }
-        doc.setFillColor(46, 125, 50); doc.rect(15, fy + 50, 180, 10, 'F');
-        doc.setTextColor(255); doc.setFont("helvetica", "bold"); doc.text(`TOTAL DANA BERSIH PETA: ${formatRupiah(k - g - l)}`, 105, fy + 56.5, {align:'center'});
+        
+        doc.text(mode === 'utama' ? "Kotor / Omzet" : "Total Omzet Jasa", 20, fy + 18); 
+        doc.text(formatRupiah(kotor), 95, fy + 18, {align:'right'});
+        
+        if(mode === 'terapis') {
+            doc.text("Jumlah Pasien", 20, fy + 26);
+            doc.text(`${totalPasien} Orang`, 95, fy + 26, {align:'right'});
+            doc.text("Total Bagi Hasil (Gaji)", 20, fy + 34);
+            doc.setTextColor(211, 158, 0); doc.text(`- ${formatRupiah(gaji)}`, 95, fy + 34, {align:'right'});
+        } else {
+            doc.text("Pengeluaran Operasional", 20, fy + 26);
+            doc.setTextColor(211, 47, 47); doc.text(`- ${formatRupiah(keluar)}`, 95, fy + 26, {align:'right'});
+            doc.setTextColor(0);
+            doc.text("Total Gaji Terapis", 20, fy + 34);
+            doc.setTextColor(211, 158, 0); doc.text(`- ${formatRupiah(gaji)}`, 95, fy + 34, {align:'right'});
+        }
+
+        doc.setFillColor(46, 125, 50); doc.rect(15, fy + 48, 180, 12, 'F');
+        doc.setTextColor(255); doc.setFont("helvetica", "bold");
+        let net = mode === 'utama' ? (kotor - gaji - keluar) : (kotor - gaji);
+        doc.text(`TOTAL DANA BERSIH (PETA): ${formatRupiah(net)}`, 105, fy + 55.5, {align:'center'});
+
+        // TAMBAHAN: DISTRIBUSI PER TERAPIS (Hanya di Laporan Terapis)
+        if(mode === 'terapis' && Object.keys(listTerapisSummary).length > 0) {
+            fy += boxHeight + 10;
+            if(fy > 230) { doc.addPage(); fy = 20; }
+            doc.setTextColor(46, 125, 50); doc.setFont("helvetica", "bold"); doc.text("DETAIL DISTRIBUSI TERAPIS", 15, fy);
+            let summaryData = Object.entries(listTerapisSummary).map(([name, val]) => [name, val.pasien, formatRupiah(val.gaji)]);
+            doc.autoTable({
+                head: [['Nama Terapis', 'Jml Pasien', 'Total Gaji']],
+                body: summaryData, startY: fy + 5, theme: 'striped', styles: { fontSize: 8, halign: 'center' },
+                headStyles: { fillColor: [46, 125, 50] }
+            });
+        }
+
         doc.save(`${title}.pdf`);
     }
 
-    function exportExcelMain() { const ws = XLSX.utils.json_to_sheet(cacheData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data"); XLSX.writeFile(wb, "Rekap_Keuangan.xlsx"); }
-    function exportExcelTerapis() { const data = cacheData.filter(d => d.terapis !== "-"); const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Terapis"); XLSX.writeFile(wb, "Rekap_Terapis.xlsx"); }
+    function exportExcelMain() {
+        const ws = XLSX.utils.json_to_sheet(cacheData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Data");
+        XLSX.writeFile(wb, "Rekap_Keuangan_Utama.xlsx");
+    }
+
+    function exportExcelTerapis() {
+        const fM = document.getElementById('tglMulaiTerapis').value;
+        const fS = document.getElementById('tglSelesaiTerapis').value;
+        const terp = document.getElementById('filterKhususTerapis').value;
+        
+        // Filter data khusus terapis sesuai input
+        const filtered = cacheData.filter(d => 
+            d.jenis === 'masuk' && 
+            d.terapis !== "-" && 
+            (terp === "Semua" || d.terapis === terp) && 
+            (d.tanggal >= fM && d.tanggal <= fS)
+        ).map(d => {
+            let gj = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65);
+            return {
+                Tanggal: formatTglIndo(d.tanggal),
+                Usaha: d.usaha,
+                Terapis: d.terapis,
+                Omzet: d.jumlah,
+                Gaji: gj,
+                Net_Peta: d.jumlah - gj,
+                Keterangan: d.deskripsi
+            };
+        });
+
+        // Hitung Summary
+        let sumPasien = filtered.length;
+        let sumOmzet = filtered.reduce((a, b) => a + b.Omzet, 0);
+        let sumGaji = filtered.reduce((a, b) => a + b.Gaji, 0);
+
+        const ws = XLSX.utils.json_to_sheet(filtered);
+        
+        // Tambahkan baris kosong dan ringkasan di bawah
+        XLSX.utils.sheet_add_aoa(ws, [
+            [],
+            ["RINGKASAN"],
+            ["Total Pasien", sumPasien],
+            ["Total Omzet", sumOmzet],
+            ["Total Gaji", sumGaji],
+            ["Total Net Peta", sumOmzet - sumGaji]
+        ], { origin: -1 });
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Laporan Terapis");
+        XLSX.writeFile(wb, `Laporan_Terapis_${terp}.xlsx`);
+    }
+
     function hapus(i) { if(confirm("Hapus?")) { cacheData.splice(i,1); localStorage.setItem("cacheData_v2", JSON.stringify(cacheData)); renderData(); } }
 
     renderUsahaUI(); renderTerapisUI(); renderData();
