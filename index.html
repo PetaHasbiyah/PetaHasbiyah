@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peta Hasbiyah | Original Color Export V4.7</title>
+    <title>Peta Hasbiyah | Final Export Fix V4.9</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -15,13 +15,13 @@
             --primary: #2E7D32; --primary-dark: #1B5E20; --secondary: #E8F5E9;
             --background: #F4F7F6; --text: #333333; --text-light: #757575;
             --white: #FFFFFF; --danger: #D32F2F; --success: #388E3C;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05); --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--text); padding: 20px; }
         .container { max-width: 1400px; margin: auto; }
         
-        /* TAB SYSTEM */
         .tab-system { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab-btn { padding: 12px 24px; border-radius: 8px 8px 0 0; border: none; cursor: pointer; font-weight: 600; background: #E0E0E0; color: #666; transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; }
@@ -31,20 +31,13 @@
         header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #E0E0E0; margin-bottom: 25px; }
         h1.brand-title { color: var(--primary); font-weight: 700; font-size: 26px; }
         
-        /* ANIMASI STAT CARDS */
+        /* STAT CARDS & ANIMATION */
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { 
-            background: var(--white); 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: var(--shadow); 
-            border-left: 5px solid transparent; 
-            transition: var(--transition);
-            cursor: pointer;
-            position: relative;
+            background: var(--white); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); 
+            border-left: 5px solid transparent; transition: var(--transition); cursor: pointer; position: relative;
         }
         .stat-card:hover { transform: translateY(-10px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
-        
         .stat-card.stat-kotor { border-left-color: var(--success); }
         .stat-card.stat-kotor:hover { background-color: #f1f8e9; }
         .stat-card.stat-keluar { border-left-color: var(--danger); }
@@ -53,36 +46,31 @@
         .stat-card.stat-gaji:hover { background-color: #fffde7; }
         .stat-card.stat-bersih { border-left-color: var(--primary); }
         .stat-card.stat-bersih:hover { background-color: #e8f5e9; }
+        .stat-card.stat-omzet { border-left-color: #2196F3; }
+        .stat-card.stat-omzet:hover { background-color: #e3f2fd; }
+        .stat-card.stat-pasien { border-left-color: #9C27B0; }
+        .stat-card.stat-pasien:hover { background-color: #f3e5f5; }
 
-        /* Terapis Specific Colors */
-        .stat-omzet { border-left-color: #2196F3 !important; }
-        .stat-omzet:hover { background-color: #e3f2fd; }
-        .stat-pasien { border-left-color: #9C27B0 !important; }
-        .stat-pasien:hover { background-color: #f3e5f5; }
+        .stat-label { font-size: 11px; color: var(--text-light); font-weight: 600; text-transform: uppercase; }
+        .stat-value { font-size: 20px; font-weight: 700; margin-top: 8px; display: block; }
+        .masuk { color: var(--success) !important; font-weight: bold; }
+        .keluar { color: var(--danger) !important; font-weight: bold; }
 
-        .stat-label { font-size: 11px; color: var(--text-light); font-weight: 600; text-transform: uppercase; transition: 0.3s; }
-        .stat-value { font-size: 20px; font-weight: 700; margin-top: 8px; transition: 0.3s; display: block; }
-        .stat-card:hover .stat-value { transform: scale(1.05); }
-
-        /* LAYOUT */
+        /* TABLES & LAYOUT */
         .main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 25px; }
         .card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 20px; }
         h4.card-title { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--secondary); padding-bottom: 5px;}
-        
-        input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #DDD; margin-bottom: 10px; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #DDD; margin-bottom: 10px; font-family: inherit; }
         button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 8px; font-weight: 600; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; width: 100%; }
         .btn-excel { background: #1B5E20; color: white; }
         .btn-pdf { background: #B71C1C; color: white; }
-        
         .table-container { background: white; border-radius: 12px; box-shadow: var(--shadow); padding: 15px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
         th { padding: 12px; background: #F8F9FA; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #EEE; }
         td { padding: 10px; border-bottom: 1px solid #F0F0F0; text-align: center; font-size: 13px; }
-        .masuk { color: var(--success); font-weight: bold; }
-        .keluar { color: var(--danger); font-weight: bold; }
         .hidden { display: none !important; }
-        .manager-list { max-height: 100px; overflow-y: auto; margin-top: 5px; margin-bottom: 10px; }
+        .manager-list { max-height: 100px; overflow-y: auto; margin-bottom: 10px; }
         .list-item { display: inline-flex; background: #EEE; padding: 3px 8px; border-radius: 10px; margin: 2px; font-size: 11px; }
     </style>
 </head>
@@ -171,8 +159,15 @@ let daftarUsaha = JSON.parse(localStorage.getItem("daftarUsaha") || '["Pijat","B
 let daftarTerapis = JSON.parse(localStorage.getItem("daftarTerapis") || '[]');
 
 const formatRupiah = (n) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
-const formatTglIndo = (dateStr) => { if(!dateStr || dateStr === "-") return "-"; const [y, m, d] = dateStr.split('-'); return `${d}/${m}/${y}`; };
 
+// FUNGSI PEMFORMAT TANGGAL (PENTING)
+const formatTglIndo = (dateStr) => { 
+    if(!dateStr || dateStr === "-") return "-"; 
+    const [y, m, d] = dateStr.split('-'); 
+    return `${d}/${m}/${y}`; 
+};
+
+// AUTO FILL TANGGAL
 const today = new Date().toISOString().split('T')[0];
 const firstDay = today.substring(0,8) + '01';
 document.getElementById('tanggal').value = today;
@@ -186,7 +181,6 @@ function openTab(tabId) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
-    if(tabId === 'tab-terapis') renderTerapisPage();
 }
 
 function renderTerapisUI() {
@@ -204,6 +198,7 @@ function renderTerapisUI() {
 function renderUsahaUI() {
     const sUsaha = document.getElementById('usaha'), fUsaha = document.getElementById('filterUsaha'), container = document.getElementById('daftarUsahaContainer');
     sUsaha.innerHTML = ''; fUsaha.innerHTML = '<option value="Semua">Semua Usaha</option>';
+    container.innerHTML = '';
     daftarUsaha.forEach((u, i) => {
         sUsaha.innerHTML += `<option value="${u}">${u}</option>`; fUsaha.innerHTML += `<option value="${u}">${u}</option>`;
         container.innerHTML += `<div class="list-item">${u} <span onclick="hapusMaster('usaha', ${i})" style="color:red;cursor:pointer;margin-left:5px;">&times;</span></div>`;
@@ -215,12 +210,14 @@ function tambahTerapis() {
     let n = document.getElementById('terapisBaru').value.trim();
     if(!n || daftarTerapis.includes(n)) return;
     daftarTerapis.push(n); localStorage.setItem("daftarTerapis", JSON.stringify(daftarTerapis)); renderTerapisUI();
+    document.getElementById('terapisBaru').value = "";
 }
 
 function tambahUsaha() {
     let u = document.getElementById('usahaBaru').value.trim();
     if(!u || daftarUsaha.includes(u)) return;
     daftarUsaha.push(u); localStorage.setItem("daftarUsaha", JSON.stringify(daftarUsaha)); renderUsahaUI();
+    document.getElementById('usahaBaru').value = "";
 }
 
 function hapusMaster(type, index) {
@@ -267,7 +264,7 @@ function renderData() {
 function renderTerapisPage() {
     const terp = document.getElementById('filterKhususTerapis').value;
     const fM = document.getElementById('tglMulaiTerapis').value, fS = document.getElementById('tglSelesaiTerapis').value;
-    const data = cacheData.filter(d => d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS));
+    const data = cacheData.filter(d => d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS)).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
     const table = document.getElementById('tabelTerapis'); table.innerHTML = "";
     let omzet = 0, gaji = 0, bersih = 0;
 
@@ -282,7 +279,8 @@ function renderTerapisPage() {
     document.getElementById('pasienTerapis').textContent = data.length;
 }
 
-// --- FULL ENGINE PDF EXPORT (BACK TO ORIGINAL FIX) ---
+// --- PERBAIKAN LOGIKA EXPORT (PDF & EXCEL) ---
+
 function unifiedPDFExport(title, data, filters, type = 'main') {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -308,6 +306,7 @@ function unifiedPDFExport(title, data, filters, type = 'main') {
             } else { bersihPeta += d.jumlah; }
         } else { pengeluaran += d.jumlah; }
         
+        // GUNAKAN formatTglIndo() DI SINI
         return type === 'main' ? 
             [formatTglIndo(d.tanggal), d.usaha, d.jenis.toUpperCase(), d.terapis, formatRupiah(d.jumlah), d.deskripsi, d.jenis] :
             [formatTglIndo(d.tanggal), d.usaha, d.terapis, formatRupiah(d.jumlah), formatRupiah(g), d.deskripsi, 'masuk'];
@@ -321,7 +320,7 @@ function unifiedPDFExport(title, data, filters, type = 'main') {
         headStyles: { fill: [46, 125, 50], halign: 'center' },
         styles: { fontSize: 8 },
         didParseCell: function(data) {
-            if (data.section === 'body' && data.column.index === (type === 'main' ? 2 : 3)) {
+            if (data.section === 'body' && (type === 'main' ? data.column.index === 2 : data.column.index === 3)) {
                 const rowData = tableBody[data.row.index];
                 if (rowData[6] === 'masuk') data.cell.styles.textColor = [46, 125, 50]; 
                 else data.cell.styles.textColor = [211, 47, 47];
@@ -333,7 +332,6 @@ function unifiedPDFExport(title, data, filters, type = 'main') {
 
     let finalY = doc.lastAutoTable.finalY + 10;
     if (finalY > 220) { doc.addPage(); finalY = 20; }
-
     doc.setDrawColor(46, 125, 50); doc.rect(15, finalY, 180, 45 + (Object.keys(gajiDetail).length * 5), 'D');
     doc.setFontSize(10); doc.setTextColor(46, 125, 50); doc.setFont("helvetica", "bold");
     doc.text("RINGKASAN REKAPITULASI", 20, finalY + 8);
@@ -362,7 +360,6 @@ function unifiedPDFExport(title, data, filters, type = 'main') {
     doc.setTextColor(255); doc.setFont("helvetica", "bold");
     const net = (type === 'main') ? (bersihPeta - pengeluaran) : bersihPeta;
     doc.text(`TOTAL DANA BERSIH PETA: ${formatRupiah(net)}`, 105, bersihY + 6.5, {align:'center'});
-
     doc.save(`${title}_${filters.mulai}.pdf`);
 }
 
@@ -375,21 +372,37 @@ function exportPDFMain() {
 function exportPDFTerapis() {
     const terp = document.getElementById('filterKhususTerapis').value;
     const fM = document.getElementById('tglMulaiTerapis').value, fS = document.getElementById('tglSelesaiTerapis').value;
-    const data = cacheData.filter(d => d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS));
+    const data = cacheData.filter(d => d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS)).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
     unifiedPDFExport("LAPORAN BAGI HASIL TERAPIS", data, {mulai: fM, selesai: fS, extra: `Terapis: ${terp}`}, 'terapis');
 }
 
 function exportExcelMain() {
-    const fM = document.getElementById('filterMulai').value;
-    const ws = XLSX.utils.json_to_sheet(cacheData); const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Data"); XLSX.writeFile(wb, `Export_Utama_${fM}.xlsx`);
+    const fU = document.getElementById('filterUsaha').value, fM = document.getElementById('filterMulai').value, fS = document.getElementById('filterSelesai').value;
+    const data = cacheData.filter(d => (fU === "Semua" || d.usaha === fU) && (d.tanggal >= fM && d.tanggal <= fS)).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
+    
+    // GUNAKAN formatTglIndo() AGAR EXCEL RAPI
+    const cleanData = data.map(d => ({
+        Tanggal: formatTglIndo(d.tanggal), Usaha: d.usaha, Jenis: d.jenis.toUpperCase(),
+        Terapis: d.terapis, Nominal: d.jumlah, Keterangan: d.deskripsi
+    }));
+    const ws = XLSX.utils.json_to_sheet(cleanData); const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data"); XLSX.writeFile(wb, `Rekap_Utama_${fM}.xlsx`);
 }
 
 function exportExcelTerapis() {
-    const fM = document.getElementById('tglMulaiTerapis').value;
-    const ws = XLSX.utils.json_to_sheet(cacheData.filter(d => d.terapis !== "-")); 
-    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Terapis");
-    XLSX.writeFile(wb, `Export_Terapis_${fM}.xlsx`);
+    const terp = document.getElementById('filterKhususTerapis').value;
+    const fM = document.getElementById('tglMulaiTerapis').value, fS = document.getElementById('tglSelesaiTerapis').value;
+    const data = cacheData.filter(d => d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS)).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
+
+    const cleanData = data.map(d => {
+        let g = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65);
+        return {
+            Tanggal: formatTglIndo(d.tanggal), Usaha: d.usaha, Terapis: d.terapis,
+            Omzet: d.jumlah, Gaji: g, Net_Peta: (d.jumlah - g), Ket: d.deskripsi
+        };
+    });
+    const ws = XLSX.utils.json_to_sheet(cleanData); const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Terapis"); XLSX.writeFile(wb, `Rekap_Terapis_${fM}.xlsx`);
 }
 
 function hapusRawData(i) { if(confirm("Hapus transaksi ini?")) { cacheData.splice(i,1); localStorage.setItem("cacheData_v2", JSON.stringify(cacheData)); renderData(); } }
