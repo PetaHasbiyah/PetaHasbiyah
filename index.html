@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peta Hasbiyah | Dashboard & Pro Export V3.3</title>
+    <title>Peta Hasbiyah | Pro Export V3.7</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -20,111 +20,135 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--text); padding: 20px; }
         .container { max-width: 1400px; margin: auto; }
-        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; border-bottom: 1px solid #E0E0E0; margin-bottom: 30px; }
-        h1.brand-title { color: var(--primary); font-weight: 700; font-size: 28px; }
         
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { 
-            background: var(--white); 
-            padding: 25px; 
-            border-radius: 16px; 
-            box-shadow: var(--shadow); 
-            border-left: 5px solid transparent; 
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
-            cursor: default;
-        }
-        .stat-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 12px 24px rgba(0,0,0,0.12); }
+        .tab-system { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 12px 24px; border-radius: 8px 8px 0 0; border: none; cursor: pointer; font-weight: 600; background: #E0E0E0; color: #666; transition: var(--transition); }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #E0E0E0; margin-bottom: 20px; }
+        h1.brand-title { color: var(--primary); font-weight: 700; font-size: 24px; }
+        
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); border-left: 5px solid transparent; }
         .stat-card.stat-kotor { border-left-color: var(--success); }
         .stat-card.stat-keluar { border-left-color: var(--danger); }
         .stat-card.stat-gaji { border-left-color: #FBC02D; }
         .stat-card.stat-bersih { border-left-color: var(--primary); }
-        
-        .stat-label { font-size: 14px; color: var(--text-light); font-weight: 500; text-transform: uppercase; }
-        .stat-value { font-size: 26px; font-weight: 700; margin: 10px 0; }
-        .masuk { color: var(--success); }
-        .keluar { color: var(--danger); }
+        .stat-label { font-size: 11px; color: var(--text-light); font-weight: 600; text-transform: uppercase; }
+        .stat-value { font-size: 19px; font-weight: 700; margin-top: 8px; }
 
-        .main-layout { display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: start; }
-        @media (max-width: 1100px) { .main-layout { grid-template-columns: 1fr; } }
+        .main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 25px; }
+        @media (max-width: 1000px) { .main-layout { grid-template-columns: 1fr; } }
         
-        .card { background: var(--white); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 20px; }
-        h4.card-title { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--secondary); padding-bottom: 8px;}
+        .card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 20px; }
+        h4.card-title { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--secondary); padding-bottom: 5px;}
         
-        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #DDD; margin-bottom: 10px; font-family: inherit; }
-        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        
-        button { padding: 12px 20px; cursor: pointer; border: none; border-radius: 8px; font-weight: 600; transition: var(--transition); }
+        input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #DDD; margin-bottom: 10px; font-size: 14px; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 8px; font-weight: 600; transition: var(--transition); }
         .btn-primary { background: var(--primary); color: white; width: 100%; }
-        .btn-secondary { background: var(--secondary); color: var(--primary); }
         .btn-excel { background: #2E7D32; color: white; }
         .btn-pdf { background: #D32F2F; color: white; }
-        .btn-delete { background: #FFEBEE; color: #D32F2F; padding: 4px 8px; font-size: 11px; }
-
-        .manager-list { max-height: 120px; overflow-y: auto; margin-top: 10px; }
-        .list-item { display: inline-flex; background: #EEE; padding: 4px 10px; border-radius: 15px; margin: 2px; font-size: 12px; }
-
-        .filter-bar { display: flex; gap: 15px; background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 20px; align-items: flex-end; }
-        .table-container { background: white; border-radius: 16px; box-shadow: var(--shadow); padding: 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th { padding: 12px; background: #F8F9FA; color: var(--text-light); font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #EEE; }
-        td { padding: 12px; border-bottom: 1px solid #F0F0F0; text-align: center; font-size: 14px; }
+        
+        .table-container { background: white; border-radius: 12px; box-shadow: var(--shadow); padding: 15px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 12px; background: #F8F9FA; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #EEE; }
+        td { padding: 10px; border-bottom: 1px solid #F0F0F0; text-align: center; font-size: 13px; }
+        
+        .masuk { color: var(--success); font-weight: bold; }
+        .keluar { color: var(--danger); font-weight: bold; }
         .hidden { display: none !important; }
+        .manager-list { max-height: 100px; overflow-y: auto; margin-top: 5px; margin-bottom: 10px; }
+        .list-item { display: inline-flex; background: #EEE; padding: 3px 8px; border-radius: 10px; margin: 2px; font-size: 11px; }
     </style>
 </head>
 
 <body>
 <div class="container">
     <header>
-        <h1 class="brand-title">Peta Hasbiyah 📊</h1>
-        <div id="statusMigrasi" style="color: var(--success); font-weight: bold; font-size: 12px;"></div>
+        <h1 class="brand-title">Peta Hasbiyah 📊 <small style="font-size: 12px; color: #999;"></small></h1>
     </header>
 
-    <div class="dashboard-grid">
-        <div class="stat-card stat-kotor"><div class="stat-label">Total Kotor</div><div id="quickKotor" class="stat-value masuk">Rp 0</div></div>
-        <div class="stat-card stat-keluar"><div class="stat-label">Total Keluar</div><div id="quickKeluar" class="stat-value keluar">Rp 0</div></div>
-        <div class="stat-card stat-gaji"><div class="stat-label">Gaji Terapis</div><div id="quickGaji" class="stat-value">Rp 0</div></div>
-        <div class="stat-card stat-bersih"><div class="stat-label">Bersih Peta</div><div id="quickBersih" class="stat-value" style="color: var(--primary);">Rp 0</div></div>
+    <div class="tab-system">
+        <button class="tab-btn active" onclick="openTab('tab-utama')">Dashboard Utama</button>
+        <button class="tab-btn" onclick="openTab('tab-terapis')">Laporan Terapis</button>
     </div>
 
-    <div class="main-layout">
-        <aside>
-            <div class="card">
-                <h4 class="card-title">Master Data</h4>
-                <div class="flex-row"><input type="text" id="usahaBaru" placeholder="Unit Usaha"><button onclick="tambahUsaha()" class="btn-secondary">Tambah</button></div>
-                <div id="daftarUsahaContainer" class="manager-list"></div>
-                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #EEE;">
-                <div class="flex-row"><input type="text" id="terapisBaru" placeholder="Nama Terapis"><button onclick="tambahTerapis()" class="btn-secondary">Tambah</button></div>
-                <div id="listTerapisContainer" class="manager-list"></div>
-            </div>
+    <div id="tab-utama" class="tab-content active">
+        <div class="dashboard-grid">
+            <div class="stat-card stat-kotor"><div class="stat-label">Total Kotor</div><div id="quickKotor" class="stat-value">Rp 0</div></div>
+            <div class="stat-card stat-keluar"><div class="stat-label">Total Keluar Umum</div><div id="quickKeluar" class="stat-value keluar">Rp 0</div></div>
+            <div class="stat-card stat-gaji"><div class="stat-label">Total Gaji Terapis</div><div id="quickGaji" class="stat-value">Rp 0</div></div>
+            <div class="stat-card stat-bersih"><div class="stat-label">Bersih Peta (Akhir)</div><div id="quickBersih" class="stat-value" style="color: var(--primary);">Rp 0</div></div>
+        </div>
 
-            <div class="card">
-                <h4 class="card-title">Input Transaksi</h4>
-                <input type="date" id="tanggal">
-                <div class="flex-row">
-                    <select id="usaha" onchange="toggleTerapisUI()" style="flex:2"></select>
-                    <select id="jenis" style="flex:1"><option value="masuk">Pemasukan</option><option value="keluar">Pengeluaran</option></select>
+        <div class="main-layout">
+            <aside>
+                <div class="card">
+                    <h4 class="card-title">Master Data</h4>
+                    <div style="display:flex; gap:5px;"><input type="text" id="usahaBaru" placeholder="Unit Usaha"><button onclick="tambahUsaha()" style="background:var(--secondary)">+</button></div>
+                    <div id="daftarUsahaContainer" class="manager-list"></div>
+                    <div style="display:flex; gap:5px;"><input type="text" id="terapisBaru" placeholder="Nama Terapis"><button onclick="tambahTerapis()" style="background:var(--secondary)">+</button></div>
+                    <div id="listTerapisContainer" class="manager-list"></div>
                 </div>
-                <select id="inputTerapis" class="hidden"></select>
-                <input type="number" id="jumlah" placeholder="Nominal (Rp)">
-                <input type="text" id="deskripsi" placeholder="Keterangan">
-                <button onclick="tambahData()" class="btn-primary">💾 SIMPAN DATA</button>
-            </div>
-        </aside>
 
-        <main>
-            <div class="filter-bar">
-                <div style="flex:1"><label style="font-size:11px; font-weight:bold;">Filter Usaha</label><select id="filterUsaha" onchange="renderData()"></select></div>
-                <div style="flex:1"><label style="font-size:11px; font-weight:bold;">Dari</label><input type="date" id="filterMulai" onchange="renderData()"></div>
-                <div style="flex:1"><label style="font-size:11px; font-weight:bold;">Sampai</label><input type="date" id="filterSelesai" onchange="renderData()"></div>
-                <div style="display:flex; gap:8px;">
-                    <button onclick="exportExcel()" class="btn-excel">📗 EXCEL</button>
-                    <button onclick="exportPDF()" class="btn-pdf">📕 PDF</button>
+                <div class="card">
+                    <h4 class="card-title">Input Transaksi</h4>
+                    <input type="date" id="tanggal">
+                    <select id="usaha" onchange="toggleTerapisUI()"></select>
+                    <select id="jenis"><option value="masuk">Pemasukan</option><option value="keluar">Pengeluaran</option></select>
+                    <select id="inputTerapis" class="hidden"></select>
+                    <input type="number" id="jumlah" placeholder="Nominal (Rp)">
+                    <input type="text" id="deskripsi" placeholder="Keterangan">
+                    <button onclick="tambahData()" class="btn-primary">SIMPAN TRANSAKSI</button>
+                </div>
+            </aside>
+
+            <main>
+                <div class="card" style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:150px;"><label style="font-size:11px; font-weight:bold;">Unit Usaha</label><select id="filterUsaha" onchange="renderData()"></select></div>
+                    <div style="flex:1; min-width:120px;"><label style="font-size:11px; font-weight:bold;">Dari</label><input type="date" id="filterMulai" onchange="renderData()"></div>
+                    <div style="flex:1; min-width:120px;"><label style="font-size:11px; font-weight:bold;">Sampai</label><input type="date" id="filterSelesai" onchange="renderData()"></div>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="exportExcel('all')" class="btn-excel">Excel</button>
+                        <button onclick="exportPDF('all')" class="btn-pdf">PDF</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table><thead><tr><th>Tgl</th><th>Usaha</th><th>Jenis</th><th>Terapis</th><th>Nominal</th><th>Ket</th><th>Aksi</th></tr></thead>
+                    <tbody id="tabelData"></tbody></table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="tab-terapis" class="tab-content">
+        <div class="card">
+            <h4 class="card-title">Laporan Performa & Bagi Hasil Terapis</h4>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; align-items:flex-end;">
+                <div><label style="font-size:11px; font-weight:bold;">Pilih Terapis</label><select id="filterKhususTerapis" onchange="renderTerapisPage()"></select></div>
+                <div><label style="font-size:11px; font-weight:bold;">Dari</label><input type="date" id="tglMulaiTerapis" onchange="renderTerapisPage()"></div>
+                <div><label style="font-size:11px; font-weight:bold;">Sampai</label><input type="date" id="tglSelesaiTerapis" onchange="renderTerapisPage()"></div>
+                <div style="display:flex; gap:5px;">
+                    <button onclick="exportExcel('single')" class="btn-excel">Cetak Excel</button>
+                    <button onclick="exportPDF('single')" class="btn-pdf">Cetak PDF</button>
                 </div>
             </div>
-            <div class="table-container">
-                <table id="tableUtama"><thead id="headTabel"></thead><tbody id="tabelData"></tbody></table>
-            </div>
-        </main>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="stat-card" style="border-left-color:#2196F3"><div class="stat-label">Total Omzet Jasa</div><div id="omzetTerapis" class="stat-value">Rp 0</div></div>
+            <div class="stat-card" style="border-left-color:#FBC02D"><div class="stat-label">Bagi Hasil Terapis</div><div id="gajiTerapis" class="stat-value">Rp 0</div></div>
+            <div class="stat-card stat-bersih"><div class="stat-label">Bersih Untuk Peta</div><div id="bersihTerapisPage" class="stat-value">Rp 0</div></div>
+            <div class="stat-card" style="border-left-color:#9C27B0"><div class="stat-label">Total Pasien</div><div id="pasienTerapis" class="stat-value">0</div></div>
+        </div>
+
+        <div class="table-container">
+            <h4 style="margin-bottom:10px; font-size: 14px; color: var(--primary);">Rincian Pemasukan Layanan Jasa</h4>
+            <table><thead><tr><th>Tgl</th><th>Usaha</th><th>Nama Terapis</th><th>Omzet Jasa</th><th>Gaji Terapis</th><th>Keterangan</th></tr></thead>
+            <tbody id="tabelTerapis"></tbody></table>
+        </div>
     </div>
 </div>
 
@@ -134,212 +158,252 @@ let daftarUsaha = JSON.parse(localStorage.getItem("daftarUsaha") || '["Pijat","B
 let daftarTerapis = JSON.parse(localStorage.getItem("daftarTerapis") || '[]');
 
 const formatRupiah = (n) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
-
-// FUNGSI BARU: Format Tanggal Indonesia (DD/MM/YYYY)
-const formatTglIndo = (dateStr) => {
-    if(!dateStr || dateStr === "-") return "-";
-    const [y, m, d] = dateStr.split('-');
-    return `${d}/${m}/${y}`;
-};
+const formatTglIndo = (dateStr) => { if(!dateStr || dateStr === "-") return "-"; const [y, m, d] = dateStr.split('-'); return `${d}/${m}/${y}`; };
 
 const today = new Date().toISOString().split('T')[0];
+const firstDay = today.substring(0,8) + '01';
 document.getElementById('tanggal').value = today;
-document.getElementById('filterMulai').value = today.substring(0,8) + '01';
+document.getElementById('filterMulai').value = firstDay;
 document.getElementById('filterSelesai').value = today;
+document.getElementById('tglMulaiTerapis').value = firstDay;
+document.getElementById('tglSelesaiTerapis').value = today;
+
+function openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if(tabId === 'tab-terapis') renderTerapisPage();
+}
 
 function renderTerapisUI() {
     const sInput = document.getElementById('inputTerapis');
+    const fKhusus = document.getElementById('filterKhususTerapis');
     const container = document.getElementById('listTerapisContainer');
     sInput.innerHTML = '<option value="">-- Pilih Terapis --</option>';
+    fKhusus.innerHTML = '<option value="Semua">Semua Terapis</option>';
+    daftarTerapis.sort().forEach((t) => {
+        const opt = `<option value="${t}">${t}</option>`;
+        sInput.innerHTML += opt; fKhusus.innerHTML += opt;
+    });
     container.innerHTML = '';
-    daftarTerapis.sort().forEach((t, i) => {
-        sInput.innerHTML += `<option value="${t}">${t}</option>`;
-        container.innerHTML += `<div class="list-item">${t} <button onclick="hapusMaster('terapis', ${i})" style="color:red; border:none; background:none; cursor:pointer;">&times;</button></div>`;
+    daftarTerapis.forEach((t, i) => {
+        container.innerHTML += `<div class="list-item">${t} <span onclick="hapusMaster('terapis', ${i})" style="color:red;cursor:pointer;margin-left:5px;">&times;</span></div>`;
     });
 }
-function tambahTerapis() {
-    let n = document.getElementById('terapisBaru').value.trim();
-    if(!n || daftarTerapis.includes(n)) return;
-    daftarTerapis.push(n); localStorage.setItem("daftarTerapis", JSON.stringify(daftarTerapis));
-    renderTerapisUI(); document.getElementById('terapisBaru').value = "";
-}
+
 function renderUsahaUI() {
     const sUsaha = document.getElementById('usaha'); const fUsaha = document.getElementById('filterUsaha');
     const container = document.getElementById('daftarUsahaContainer');
     sUsaha.innerHTML = ''; fUsaha.innerHTML = '<option value="Semua">Semua Usaha</option>'; container.innerHTML = '';
     daftarUsaha.forEach((u, i) => {
         sUsaha.innerHTML += `<option value="${u}">${u}</option>`; fUsaha.innerHTML += `<option value="${u}">${u}</option>`;
-        container.innerHTML += `<div class="list-item">${u} <button onclick="hapusMaster('usaha', ${i})" style="color:red; border:none; background:none; cursor:pointer;">&times;</button></div>`;
+        container.innerHTML += `<div class="list-item">${u} <span onclick="hapusMaster('usaha', ${i})" style="color:red;cursor:pointer;margin-left:5px;">&times;</span></div>`;
     });
     toggleTerapisUI();
 }
+
+function tambahTerapis() {
+    let n = document.getElementById('terapisBaru').value.trim();
+    if(!n || daftarTerapis.includes(n)) return;
+    daftarTerapis.push(n); localStorage.setItem("daftarTerapis", JSON.stringify(daftarTerapis));
+    renderTerapisUI(); document.getElementById('terapisBaru').value = "";
+}
+
 function tambahUsaha() {
     let u = document.getElementById('usahaBaru').value.trim();
     if(!u || daftarUsaha.includes(u)) return;
     daftarUsaha.push(u); localStorage.setItem("daftarUsaha", JSON.stringify(daftarUsaha));
     renderUsahaUI(); document.getElementById('usahaBaru').value = "";
 }
+
 function hapusMaster(type, index) {
-    if(!confirm("Hapus?")) return;
+    if(!confirm("Hapus data master ini?")) return;
     if(type === 'usaha') { daftarUsaha.splice(index, 1); localStorage.setItem("daftarUsaha", JSON.stringify(daftarUsaha)); renderUsahaUI(); }
     else { daftarTerapis.splice(index, 1); localStorage.setItem("daftarTerapis", JSON.stringify(daftarTerapis)); renderTerapisUI(); }
 }
-function toggleTerapisUI() { const u = document.getElementById('usaha').value.toLowerCase(); document.getElementById('inputTerapis').classList.toggle('hidden', !u.includes("pijat")); }
+
+function toggleTerapisUI() { 
+    // Terapis muncul jika unit usaha mengandung kata pijat, bekam, atau gurah (layanan jasa)
+    const u = document.getElementById('usaha').value.toLowerCase(); 
+    const isService = u.includes("pijat") || u.includes("bekam") || u.includes("gurah");
+    document.getElementById('inputTerapis').classList.toggle('hidden', !isService); 
+}
 
 function tambahData() {
     const u = document.getElementById('usaha').value, tgl = document.getElementById('tanggal').value, jns = document.getElementById('jenis').value, jml = parseInt(document.getElementById('jumlah').value), trp = document.getElementById('inputTerapis').value, dsk = document.getElementById('deskripsi').value;
-    if(!tgl || !jml) return alert("Isi nominal!");
-    cacheData.push({ tanggal: tgl, usaha: u, jenis: jns, jumlah: jml, terapis: (u.toLowerCase().includes("pijat") ? (trp || "Tanpa Nama") : "-"), deskripsi: dsk || "-" });
+    if(!tgl || !jml) return alert("Isi nominal dan tanggal!");
+    
+    // Logika Nama Terapis: Jika bukan layanan jasa, paksa jadi "-" agar filter halaman 2 aman.
+    const uLower = u.toLowerCase();
+    const isService = uLower.includes("pijat") || uLower.includes("bekam") || uLower.includes("gurah");
+    const namaTerapisFinal = isService ? (trp || "Tanpa Nama") : "-";
+
+    cacheData.push({ 
+        tanggal: tgl, 
+        usaha: u, 
+        jenis: jns, 
+        jumlah: jml, 
+        terapis: namaTerapisFinal, 
+        deskripsi: dsk || "-" 
+    });
     localStorage.setItem("cacheData_v2", JSON.stringify(cacheData));
     document.getElementById('jumlah').value = ""; document.getElementById('deskripsi').value = ""; renderData();
 }
 
-function getFilteredData() {
-    const fU = document.getElementById('filterUsaha').value, fM = document.getElementById('filterMulai').value, fS = document.getElementById('filterSelesai').value;
-    return cacheData.filter(d => (fU === "Semua" || d.usaha === fU) && (d.tanggal >= fM && d.tanggal <= fS));
-}
-
 function renderData() {
-    const data = getFilteredData(); const table = document.getElementById('tabelData'); const head = document.getElementById('headTabel');
-    head.innerHTML = `<tr><th>Tanggal</th><th>Usaha</th><th>Jenis</th><th>Terapis</th><th>Jumlah</th><th>Keterangan</th><th>Aksi</th></tr>`;
-    table.innerHTML = "";
-    let kotor = 0, keluar = 0, porsiPeta = 0, gaji = {};
-    
-    // DASHBOARD: Diurutkan Berdasarkan Tanggal Terbaru (Descending)
-    const dataDashboard = [...data].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+    const fU = document.getElementById('filterUsaha').value, fM = document.getElementById('filterMulai').value, fS = document.getElementById('filterSelesai').value;
+    const data = cacheData.filter(d => (fU === "Semua" || d.usaha === fU) && (d.tanggal >= fM && d.tanggal <= fS))
+                .sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
 
-    dataDashboard.forEach((d) => {
+    const table = document.getElementById('tabelData'); table.innerHTML = "";
+    let kotor = 0, keluar = 0, porsiPeta = 0, totalGaji = 0;
+
+    data.forEach((d) => {
+        let gajiItem = 0;
         if(d.jenis === 'masuk') {
             kotor += d.jumlah;
-            if(d.usaha.toLowerCase().includes("pijat")) {
-                let g = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65);
-                gaji[d.terapis] = (gaji[d.terapis] || 0) + g; porsiPeta += (d.jumlah - g);
+            if(d.terapis !== "-" && d.terapis !== "Tanpa Nama") {
+                gajiItem = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65);
+                totalGaji += gajiItem; porsiPeta += (d.jumlah - gajiItem);
             } else { porsiPeta += d.jumlah; }
         } else { keluar += d.jumlah; }
-        
-        // TANGGAL DI DASHBOARD DISESUAIKAN JADI DD/MM/YYYY
-        table.innerHTML += `<tr><td>${formatTglIndo(d.tanggal)}</td><td>${d.usaha}</td><td class="${d.jenis}">${d.jenis.toUpperCase()}</td><td>${d.terapis}</td><td style="font-weight:bold">${formatRupiah(d.jumlah)}</td><td>${d.deskripsi}</td><td><button class="btn-delete" onclick="hapusRawData(${cacheData.indexOf(d)})">Hapus</button></td></tr>`;
+        table.innerHTML += `<tr><td>${formatTglIndo(d.tanggal)}</td><td>${d.usaha}</td><td class="${d.jenis}">${d.jenis.toUpperCase()}</td><td>${d.terapis}</td><td style="font-weight:bold">${formatRupiah(d.jumlah)}</td><td>${d.deskripsi}</td><td><button onclick="hapusRawData(${cacheData.indexOf(d)})" style="color:red;border:none;background:none;cursor:pointer;">Hapus</button></td></tr>`;
     });
     
-    document.getElementById('quickKotor').textContent = formatRupiah(kotor); document.getElementById('quickKeluar').textContent = formatRupiah(keluar);
-    document.getElementById('quickGaji').textContent = formatRupiah(Object.values(gaji).reduce((a,b)=>a+b, 0));
+    document.getElementById('quickKotor').textContent = formatRupiah(kotor); 
+    document.getElementById('quickKeluar').textContent = formatRupiah(keluar);
+    document.getElementById('quickGaji').textContent = formatRupiah(totalGaji);
     document.getElementById('quickBersih').textContent = formatRupiah(porsiPeta - keluar);
 }
 
-function hapusRawData(i) { if(confirm("Hapus?")) { cacheData.splice(i, 1); localStorage.setItem("cacheData_v2", JSON.stringify(cacheData)); renderData(); } }
+function renderTerapisPage() {
+    const terp = document.getElementById('filterKhususTerapis').value;
+    const fM = document.getElementById('tglMulaiTerapis').value;
+    const fS = document.getElementById('tglSelesaiTerapis').value;
+    const table = document.getElementById('tabelTerapis');
+    table.innerHTML = "";
 
-function exportExcel() {
-    // EXPORT: Diurutkan Berdasarkan Tanggal Terlama (Ascending)
-    const dataFiltered = getFilteredData().sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
-    if (dataFiltered.length === 0) return alert("Data kosong!");
-    
-    const fMulai = formatTglIndo(document.getElementById('filterMulai').value);
-    const fSelesai = formatTglIndo(document.getElementById('filterSelesai').value);
-    
-    let kotor = 0, keluar = 0, porsiPeta = 0, gaji = {};
-    const rows = dataFiltered.map(d => {
-        if (d.jenis === 'masuk') {
-            kotor += d.jumlah;
-            if (d.usaha.toLowerCase().includes("pijat")) {
-                let g = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65);
-                gaji[d.terapis] = (gaji[d.terapis] || 0) + g;
-                porsiPeta += (d.jumlah - g);
-            } else { porsiPeta += d.jumlah; }
-        } else { keluar += d.jumlah; }
-        return [formatTglIndo(d.tanggal), d.usaha, d.jenis === 'masuk' ? "[+] MASUK" : "[-] KELUAR", d.terapis, d.jumlah, d.deskripsi];
+    // FILTER SUPER KETAT: Hanya Pemasukan + Punya Nama Terapis (Bukan - atau Tanpa Nama)
+    const data = cacheData.filter(d => {
+        const isValidService = d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama";
+        const matchTerapis = (terp === "Semua" || d.terapis === terp);
+        const matchTanggal = (d.tanggal >= fM && d.tanggal <= fS);
+        return isValidService && matchTerapis && matchTanggal;
+    }).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
+
+    let omzet = 0, gaji = 0, bersihPeta = 0, pasien = 0;
+    data.forEach(d => {
+        let g = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65);
+        omzet += d.jumlah; gaji += g; bersihPeta += (d.jumlah - g); pasien++;
+        table.innerHTML += `<tr><td>${formatTglIndo(d.tanggal)}</td><td>${d.usaha}</td><td>${d.terapis}</td><td style="font-weight:bold">${formatRupiah(d.jumlah)}</td><td style="color:green;font-weight:bold;">${formatRupiah(g)}</td><td>${d.deskripsi}</td></tr>`;
     });
-    const wb = XLSX.utils.book_new();
-    const sheetData = [
-        ["LAPORAN KEUANGAN PETA HASBIYAH"],
-        [`Periode: ${fMulai} s/d ${fSelesai}`],
-        [],
-        ["TANGGAL", "UNIT USAHA", "JENIS", "TERAPIS", "NOMINAL (RP)", "KETERANGAN"],
-        ...rows,
-        [],
-        ["--- RINGKASAN AKHIR ---"],
-        ["TOTAL PENDAPATAN KOTOR", kotor],
-        ["TOTAL PENGELUARAN UMUM", keluar],
-        ["TOTAL BAGI HASIL (GAJI)", Object.values(gaji).reduce((a, b) => a + b, 0)],
-        ["DANA BERSIH PETA", porsiPeta - keluar],
-        [],
-        ["--- RINCIAN GAJI PER TERAPIS ---"],
-        ...Object.entries(gaji).map(([nama, total]) => [nama, total])
-    ];
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    ws['!cols'] = [{wch:15}, {wch:15}, {wch:15}, {wch:20}, {wch:15}, {wch:35}];
-    XLSX.utils.book_append_sheet(wb, ws, "Laporan");
-    XLSX.writeFile(wb, `Laporan_Peta_${document.getElementById('filterMulai').value}.xlsx`);
+
+    document.getElementById('omzetTerapis').textContent = formatRupiah(omzet);
+    document.getElementById('gajiTerapis').textContent = formatRupiah(gaji);
+    document.getElementById('bersihTerapisPage').textContent = formatRupiah(bersihPeta);
+    document.getElementById('pasienTerapis').textContent = pasien;
 }
 
-function exportPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
-    // EXPORT: Diurutkan Berdasarkan Tanggal Terlama (Ascending)
-    const dataFiltered = getFilteredData().sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
-    if (dataFiltered.length === 0) return alert("Data kosong!");
+function hapusRawData(i) { if(confirm("Hapus transaksi ini?")) { cacheData.splice(i, 1); localStorage.setItem("cacheData_v2", JSON.stringify(cacheData)); renderData(); } }
 
-    const fMulai = formatTglIndo(document.getElementById('filterMulai').value);
-    const fSelesai = formatTglIndo(document.getElementById('filterSelesai').value);
-
-    doc.setFillColor(46, 125, 50);
-    doc.rect(0, 0, 210, 35, 'F');
-    doc.setFontSize(20); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold");
-    doc.text("LAPORAN KEUANGAN", 15, 18);
-    doc.setFontSize(10); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "normal");
-    doc.text(`Periode: ${fMulai} s/d ${fSelesai}`, 15, 26);
+function exportExcel(mode) {
+    let dataToExport = [];
+    let filename = "";
     
-    let kotor = 0, keluar = 0, porsiPeta = 0, gaji = {};
-    const tableBody = dataFiltered.map(d => {
-        const isMasuk = d.jenis === 'masuk';
-        if(isMasuk) {
-            kotor += d.jumlah;
-            if(d.usaha.toLowerCase().includes("pijat")) {
-                let g = (d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65);
-                gaji[d.terapis] = (gaji[d.terapis] || 0) + g; porsiPeta += (d.jumlah - g);
-            } else { porsiPeta += d.jumlah; }
-        } else { keluar += d.jumlah; }
-        return [formatTglIndo(d.tanggal), d.usaha, d.jenis.toUpperCase(), d.terapis, formatRupiah(d.jumlah), d.deskripsi, d.jenis];
+    if(mode === 'all') {
+        const fU = document.getElementById('filterUsaha').value;
+        const fM = document.getElementById('filterMulai').value;
+        const fS = document.getElementById('filterSelesai').value;
+        dataToExport = cacheData.filter(d => (fU === "Semua" || d.usaha === fU) && (d.tanggal >= fM && d.tanggal <= fS));
+        filename = "Laporan_Dashboard_Peta";
+    } else {
+        const terp = document.getElementById('filterKhususTerapis').value;
+        const fM = document.getElementById('tglMulaiTerapis').value;
+        const fS = document.getElementById('tglSelesaiTerapis').value;
+        // Filter sama dengan halaman terapis
+        dataToExport = cacheData.filter(d => {
+            return d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS);
+        });
+        filename = `Laporan_Bagi_Hasil_${terp}`;
+    }
+
+    if(dataToExport.length === 0) return alert("Data kosong untuk filter ini!");
+
+    let kotor = 0, gaji = 0, bersih = 0;
+    const rows = dataToExport.map(d => {
+        let g = (d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama") ? ((d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65)) : 0;
+        kotor += (d.jenis === 'masuk' ? d.jumlah : 0);
+        gaji += g;
+        bersih += (d.jenis === 'masuk' ? (d.jumlah - g) : -d.jumlah);
+        return [formatTglIndo(d.tanggal), d.usaha, d.jenis.toUpperCase(), d.terapis, d.jumlah, d.deskripsi];
     });
+
+    const rekap = [
+        [], ["REKAPITULASI LAPORAN"],
+        ["Total Omzet Kotor", kotor],
+        ["Total Gaji Terapis", gaji],
+        ["Total Bersih Unit (Peta)", bersih]
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet([["TANGGAL", "USAHA", "JENIS", "TERAPIS", "NOMINAL", "KETERANGAN"], ...rows, ...rekap]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+    XLSX.writeFile(wb, `${filename}.xlsx`);
+}
+
+function exportPDF(mode) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let dataToExport = [];
+    let title = "";
+
+    if(mode === 'all') {
+        const fU = document.getElementById('filterUsaha').value;
+        const fM = document.getElementById('filterMulai').value;
+        const fS = document.getElementById('filterSelesai').value;
+        dataToExport = cacheData.filter(d => (fU === "Semua" || d.usaha === fU) && (d.tanggal >= fM && d.tanggal <= fS));
+        title = "LAPORAN KEUANGAN DASHBOARD";
+    } else {
+        const terp = document.getElementById('filterKhususTerapis').value;
+        const fM = document.getElementById('tglMulaiTerapis').value;
+        const fS = document.getElementById('tglSelesaiTerapis').value;
+        dataToExport = cacheData.filter(d => {
+            return d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama" && (terp === "Semua" || d.terapis === terp) && (d.tanggal >= fM && d.tanggal <= fS);
+        });
+        title = `LAPORAN BAGI HASIL: ${terp.toUpperCase()}`;
+    }
+
+    doc.setFontSize(16); doc.text(title, 15, 20);
+    doc.setFontSize(10); doc.text(`Periode: ${formatTglIndo(mode==='all'?document.getElementById('filterMulai').value:document.getElementById('tglMulaiTerapis').value)} s/d ${formatTglIndo(mode==='all'?document.getElementById('filterSelesai').value:document.getElementById('tglSelesaiTerapis').value)}`, 15, 28);
+
+    let kotor = 0, gaji = 0, bersih = 0;
+    const body = dataToExport.map(d => {
+        let g = (d.jenis === 'masuk' && d.terapis !== "-" && d.terapis !== "Tanpa Nama") ? ((d.jumlah <= 50000) ? d.jumlah : (d.jumlah * 0.65)) : 0;
+        kotor += (d.jenis === 'masuk' ? d.jumlah : 0);
+        gaji += g;
+        bersih += (d.jenis === 'masuk' ? (d.jumlah - g) : -d.jumlah);
+        return [formatTglIndo(d.tanggal), d.usaha, d.terapis, formatRupiah(d.jumlah), d.deskripsi];
+    });
+
     doc.autoTable({
-        startY: 40,
-        head: [['Tgl', 'Usaha', 'Jenis', 'Terapis', 'Nominal', 'Keterangan']],
-        body: tableBody.map(row => row.slice(0, 6)),
+        startY: 35,
+        head: [['Tanggal', 'Usaha', 'Terapis', 'Nominal', 'Keterangan']],
+        body: body,
         theme: 'grid',
-        headStyles: { fill: [46, 125, 50], halign: 'center' },
-        styles: { fontSize: 8 },
-        didParseCell: function(data) {
-            const rowIndex = data.row.index;
-            const rowData = tableBody[rowIndex];
-            if (data.section === 'body') {
-                data.cell.styles.fillColor = (rowData[6] === 'masuk') ? [232, 245, 233] : [255, 235, 238];
-            }
-        },
-        columnStyles: { 0: {cellWidth: 22}, 4: { halign: 'right', fontStyle: 'bold', cellWidth: 35 } }
+        headStyles: { fill: [46, 125, 50] }
     });
-    let finalY = doc.lastAutoTable.finalY + 10;
-    if (finalY > 220) { doc.addPage(); finalY = 20; }
-    doc.setDrawColor(46, 125, 50);
-    doc.setFillColor(252, 255, 252);
-    doc.rect(15, finalY, 180, 45 + (Object.keys(gaji).length * 5), 'FD');
-    doc.setFontSize(10); doc.setTextColor(46, 125, 50); doc.setFont("helvetica", "bold");
-    doc.text("RINGKASAN REKAPITULASI", 20, finalY + 8);
-    doc.setFontSize(9); doc.setTextColor(50); doc.setFont("helvetica", "normal");
-    doc.text("Total Pendapatan Kotor", 20, finalY + 18); doc.text(formatRupiah(kotor), 90, finalY + 18, {align: 'right'});
-    doc.text("Total Pengeluaran Umum", 20, finalY + 24); doc.text(formatRupiah(keluar), 90, finalY + 24, {align: 'right'});
-    doc.text("Total Gaji (Bagi Hasil)", 20, finalY + 30); doc.text(formatRupiah(Object.values(gaji).reduce((a,b)=>a+b,0)), 90, finalY + 30, {align: 'right'});
-    doc.setDrawColor(230); doc.line(100, finalY + 5, 100, finalY + 40);
-    doc.setFont("helvetica", "bold"); doc.text("DETAIL GAJI:", 105, finalY + 18);
-    doc.setFont("helvetica", "normal");
-    let yGaji = finalY + 24;
-    Object.entries(gaji).forEach(([n, t]) => {
-        doc.text(`- ${n}`, 105, yGaji); doc.text(formatRupiah(t), 185, yGaji, {align: 'right'});
-        yGaji += 5;
-    });
-    const bersihY = Math.max(yGaji, finalY + 38) + 2;
-    doc.setFillColor(46, 125, 50); doc.rect(15, bersihY, 180, 10, 'F');
-    doc.setFontSize(11); doc.setTextColor(255); doc.setFont("helvetica", "bold");
-    doc.text(`TOTAL DANA BERSIH PETA: ${formatRupiah(porsiPeta - keluar)}`, 105, bersihY + 6.5, {align: 'center'});
-    doc.save(`Laporan_Peta_Pro_V3.3.pdf`);
+
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(11); doc.setFont("helvetica", "bold");
+    doc.text("REKAPITULASI AKHIR:", 15, finalY);
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    doc.text(`- Total Omzet Kotor: ${formatRupiah(kotor)}`, 15, finalY + 7);
+    doc.text(`- Total Gaji Terapis: ${formatRupiah(gaji)}`, 15, finalY + 14);
+    doc.setFont("helvetica", "bold");
+    doc.text(`- TOTAL BERSIH UNTUK PETA: ${formatRupiah(bersih)}`, 15, finalY + 21);
+
+    doc.save(`${title}.pdf`);
 }
 
 renderUsahaUI(); renderTerapisUI(); renderData();
