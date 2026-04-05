@@ -134,8 +134,10 @@ let daftarUsaha = JSON.parse(localStorage.getItem("daftarUsaha") || '["Pijat","B
 let daftarTerapis = JSON.parse(localStorage.getItem("daftarTerapis") || '[]');
 
 const formatRupiah = (n) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
+
+// FUNGSI BARU: Format Tanggal Indonesia (DD/MM/YYYY)
 const formatTglIndo = (dateStr) => {
-    if(!dateStr) return "-";
+    if(!dateStr || dateStr === "-") return "-";
     const [y, m, d] = dateStr.split('-');
     return `${d}/${m}/${y}`;
 };
@@ -202,8 +204,11 @@ function renderData() {
     head.innerHTML = `<tr><th>Tanggal</th><th>Usaha</th><th>Jenis</th><th>Terapis</th><th>Jumlah</th><th>Keterangan</th><th>Aksi</th></tr>`;
     table.innerHTML = "";
     let kotor = 0, keluar = 0, porsiPeta = 0, gaji = {};
-    // Tampilan dashboard tetap reverse (terbaru di atas) untuk kemudahan input
-    [...data].reverse().forEach((d) => {
+    
+    // DASHBOARD: Diurutkan Berdasarkan Tanggal Terbaru (Descending)
+    const dataDashboard = [...data].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+    dataDashboard.forEach((d) => {
         if(d.jenis === 'masuk') {
             kotor += d.jumlah;
             if(d.usaha.toLowerCase().includes("pijat")) {
@@ -211,16 +216,20 @@ function renderData() {
                 gaji[d.terapis] = (gaji[d.terapis] || 0) + g; porsiPeta += (d.jumlah - g);
             } else { porsiPeta += d.jumlah; }
         } else { keluar += d.jumlah; }
+        
+        // TANGGAL DI DASHBOARD DISESUAIKAN JADI DD/MM/YYYY
         table.innerHTML += `<tr><td>${formatTglIndo(d.tanggal)}</td><td>${d.usaha}</td><td class="${d.jenis}">${d.jenis.toUpperCase()}</td><td>${d.terapis}</td><td style="font-weight:bold">${formatRupiah(d.jumlah)}</td><td>${d.deskripsi}</td><td><button class="btn-delete" onclick="hapusRawData(${cacheData.indexOf(d)})">Hapus</button></td></tr>`;
     });
+    
     document.getElementById('quickKotor').textContent = formatRupiah(kotor); document.getElementById('quickKeluar').textContent = formatRupiah(keluar);
     document.getElementById('quickGaji').textContent = formatRupiah(Object.values(gaji).reduce((a,b)=>a+b, 0));
     document.getElementById('quickBersih').textContent = formatRupiah(porsiPeta - keluar);
 }
+
 function hapusRawData(i) { if(confirm("Hapus?")) { cacheData.splice(i, 1); localStorage.setItem("cacheData_v2", JSON.stringify(cacheData)); renderData(); } }
 
 function exportExcel() {
-    // URUTKAN DATA BERDASARKAN TANGGAL (Lama ke Baru)
+    // EXPORT: Diurutkan Berdasarkan Tanggal Terlama (Ascending)
     const dataFiltered = getFilteredData().sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
     if (dataFiltered.length === 0) return alert("Data kosong!");
     
@@ -265,7 +274,7 @@ function exportExcel() {
 function exportPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
-    // URUTKAN DATA BERDASARKAN TANGGAL (Lama ke Baru)
+    // EXPORT: Diurutkan Berdasarkan Tanggal Terlama (Ascending)
     const dataFiltered = getFilteredData().sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
     if (dataFiltered.length === 0) return alert("Data kosong!");
 
